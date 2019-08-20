@@ -729,6 +729,10 @@ struct TABLE;
 struct st_table_stats* get_table_stats(TABLE *table,
                                        struct handlerton *engine_type);
 
+/* Fetches table stats for a given user and table pair */
+struct st_user_table_stats* get_user_table_stats(THD *thd, TABLE *table,
+                                       struct handlerton *engine_type);
+
 unsigned char get_db_stats_index(const char* db);
 DB_STATS *get_db_stats(const char *db);
 
@@ -957,6 +961,34 @@ extern uint num_sharded_sockets;
 extern uint num_conn_handling_threads;
 extern my_bool gl_socket_sharding;
 
+/*
+  Global variable to control the implementation to get statistics per
+  user-table pair
+  The basic version exposes two new columns in TABLE_STATISTICS
+  LAST_ADMIN and LAST_NON_ADMIN to record the last time a table was used
+  by an admin user and non admin user respectively (as in admin_users_list)
+  The full version provides information through USER_TABLE_STATISTICS.
+  The default value of the control is OFF (neither is populated).
+  Keep the enum in the sync with uts_control_values[] (sys_vars.cc)
+*/
+enum enum_uts_control
+{
+  UTS_CONTROL_OFF     = 0,
+  UTS_CONTROL_BASIC   = 1,
+  UTS_CONTROL_ALL     = 2,
+  /* Add new control before the following line */
+  UTS_CONTROL_INVALID
+};
+/* Controls implementation of user_table_statistics (see sys_vars.cc) */
+extern ulong user_table_stats_control;
+/* Contains the list of users with admin roles (comma separated) */
+extern char *admin_users_list;
+
+#define UTS_LEVEL_ALL()                           \
+  (user_table_stats_control == UTS_CONTROL_ALL)
+#define UTS_LEVEL_BASIC()                         \
+  (user_table_stats_control != UTS_CONTROL_OFF)
+
 enum enum_gtid_mode
 {
   /// Support only anonymous groups, not GTIDs.
@@ -1148,7 +1180,9 @@ extern PSI_mutex_key
   key_gtid_info_run_lock,
   key_gtid_info_data_lock,
   key_gtid_info_sleep_lock,
-  key_gtid_info_thd_lock;
+  key_gtid_info_thd_lock,
+  key_USER_CONN_LOCK_user_table_stats;
+
 extern PSI_mutex_key key_RELAYLOG_LOCK_commit;
 extern PSI_mutex_key key_RELAYLOG_LOCK_commit_queue;
 extern PSI_mutex_key key_RELAYLOG_LOCK_semisync;

@@ -61,6 +61,7 @@
 #include "table_cache.h"                        // Table_cache_manager
 #include "my_aes.h" // my_aes_opmode_names
 #include "sql_multi_tenancy.h"
+#include "sql_connect.h" // USER_CONN
 
 #include "log_event.h"
 #include "binlog.h"
