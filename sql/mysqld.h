@@ -1204,7 +1204,7 @@ extern PSI_rwlock_key key_rwlock_LOCK_grant, key_rwlock_LOCK_logger,
   key_rwlock_LOCK_sys_init_connect, key_rwlock_LOCK_sys_init_slave,
   key_rwlock_LOCK_system_variables_hash, key_rwlock_query_cache_query_lock,
   key_rwlock_global_sid_lock, key_rwlock_LOCK_gap_lock_exceptions,
-  key_rwlock_LOCK_legacy_user_name_pattern;
+  key_rwlock_LOCK_legacy_user_name_pattern,
   key_rwlock_LOCK_admin_users_list_regex, key_rwlock_hash_filo;
 
 #ifdef HAVE_MMAP
